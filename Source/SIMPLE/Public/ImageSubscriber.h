@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
+#include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 
 #include "PushUEMacros.h"
 // this is a safe space..
@@ -89,9 +90,11 @@ public:
   UPROPERTY(BlueprintReadWrite, Category = "SIMPLE|ImageSubscriber")
   bool CreateTexture;
 
-  // A Video texture. If this is
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
   UTexture2D* VideoTexture;
+
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
+  UTextureRenderTarget2D* RenderTarget;
 
 protected:
   void ProcessImage(const simple_msgs::Image<uint8_t>&);

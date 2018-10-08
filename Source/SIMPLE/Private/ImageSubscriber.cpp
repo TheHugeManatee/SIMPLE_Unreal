@@ -85,5 +85,7 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
   // If the image actually has data and we are supposed to, upload to a texture
   if (wrap.total() && CreateTexture) {
     VideoTexture = ReceivedImage->toTexture(VideoTexture, false);
+
+    if (RenderTarget) ReceivedImage->toRenderTarget(RenderTarget, false);
   }
 }
