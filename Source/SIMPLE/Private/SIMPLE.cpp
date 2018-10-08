@@ -19,11 +19,10 @@ void FSIMPLEModule::StartupModule() {
   // Add on the relative location of the third party dll and load it
   FString LibraryPath;
 #if PLATFORM_WINDOWS
-  LibraryPath =
-      FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/bin/simple.dll"));
+  LibraryPath = FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/bin/simple.dll"));
 //#elif PLATFORM_MAC
-  //LibraryPath =
-  //    FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/Mac/bin/simple.dylib"));
+// LibraryPath =
+//    FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/Mac/bin/simple.dylib"));
 #else
   static_assert(false, "Other platforms are currently not supported!");
 #endif
@@ -32,8 +31,7 @@ void FSIMPLEModule::StartupModule() {
       !LibraryPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*LibraryPath) : nullptr;
 
   if (SIMPLELibraryHandle) {
-    UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Version %d.%d.%d"), CV_MAJOR_VERSION, CV_MINOR_VERSION,
-           CV_SUBMINOR_VERSION)
+    UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Libraryh"))
   } else {
     UE_LOG(SIMPLE, Error,
            TEXT("Failed to load SIMPLE library! Check your include/lib paths and make sure "

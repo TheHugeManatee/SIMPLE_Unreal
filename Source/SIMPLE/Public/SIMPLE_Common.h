@@ -5,4 +5,4 @@
 #include "CoreMinimal.h"
 
 // Declare our own log category
-DECLARE_LOG_CATEGORY_EXTERN(OpenCV, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(SIMPLE, Log, All);
