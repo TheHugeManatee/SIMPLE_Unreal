@@ -69,11 +69,13 @@ public class SIMPLE : ModuleRules
             //Add the import library
             PublicLibraryPaths.AddRange(
                 new string[] {
-                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib")
+                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib"),
+                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "lib")
                 });
 
             PublicAdditionalLibraries.Add("simple.lib");
             PublicAdditionalLibraries.Add("simple_msgs.lib");
+            PublicAdditionalLibraries.Add("libzmq-mt-4_3_1.lib");
             PublicIncludePaths.AddRange(new string[] { 
                 Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "include"),
                 Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "include"),
@@ -83,7 +85,7 @@ public class SIMPLE : ModuleRules
 
 
             //Delay - load the DLL, so we can load it from the right place first
-            PublicDelayLoadDLLs.Add("simple.dll");
+            //PublicDelayLoadDLLs.Add("simple.dll");
 
             // Add a Runtime Dependency so the DLLs will be packaged correctly
             RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "bin", "simple.dll"));
