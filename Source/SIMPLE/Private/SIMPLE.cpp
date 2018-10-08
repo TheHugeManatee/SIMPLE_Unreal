@@ -7,9 +7,6 @@
 
 #define LOCTEXT_NAMESPACE "FSIMPLEModule"
 
-#include <simple/client.hpp>
-#include <simple_msgs/int.hpp>
-
 DEFINE_LOG_CATEGORY(SIMPLE);
 
 void FSIMPLEModule::StartupModule() {
