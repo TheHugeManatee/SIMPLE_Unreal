@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "Runtime/Core/Public/Containers/Queue.h"
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 
@@ -39,6 +40,8 @@ protected:
   // Event is signaled whenever an image is received
   UFUNCTION(BlueprintImplementableEvent, Category = "SIMPLE|ImageSubscriber")
   void OnFrameReceived();
+
+  virtual void Tick(float DeltaTime) override;
 
 public:
   /**
@@ -87,17 +90,19 @@ public:
   UCVUMat* ReceivedImage;
 
   // Signals the subscriber to create/update a texture from the Received image (See VideoTexture)
-  UPROPERTY(BlueprintReadWrite, Category = "SIMPLE|ImageSubscriber")
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
   bool CreateTexture;
 
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
-  UTexture2D* VideoTexture;
+  UTextureRenderTarget2D* VideoTexture;
 
-  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
-  UTextureRenderTarget2D* RenderTarget;
-
-protected:
+private:
   void ProcessImage(const simple_msgs::Image<uint8_t>&);
 
+  TAtomic<bool> HasReceivedImage;
   std::unique_ptr<simple::Subscriber<simple_msgs::Image<uint8_t>>> Subscriber;
+
+  UPROPERTY()  // make this a uproperty so it gets GC-handled
+  UCVUMat* ReceivedBackBuffer;
+  FCriticalSection SwapMutex;
 };

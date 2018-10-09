@@ -22,7 +22,7 @@ AImageSubscriber::AImageSubscriber()
   , ImageSize{0, 0, 0}
   , VideoTexture{nullptr}
   , Subscriber{nullptr} {
-  PrimaryActorTick.bCanEverTick = false;
+  PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +35,17 @@ void AImageSubscriber::BeginPlay() {
 void AImageSubscriber::EndPlay(const EEndPlayReason::Type EndPlayReason) {
   Stop();
   Super::EndPlay(EndPlayReason);
+}
+
+void AImageSubscriber::Tick(float DeltaTime) {
+  if (HasReceivedImage) {
+    FScopeLock lock(&SwapMutex);
+    if (CreateTexture) {
+      VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
+    }
+    HasReceivedImage = false;
+    OnFrameReceived();
+  }
 }
 
 void AImageSubscriber::ConnectTo(FString Url, int32 Port) {
@@ -60,6 +71,7 @@ void AImageSubscriber::Connect() {
 
 void AImageSubscriber::Stop() {
   Subscriber.reset();
+
   isActive = false;
 }
 
@@ -73,19 +85,21 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
     return;
   }
 
-  if (!ReceivedImage) {
-    ReceivedImage = NewObject<UCVUMat>();
+  if (!ReceivedBackBuffer) {
+    ReceivedBackBuffer = NewObject<UCVUMat>();
   }
 
   // Wrap in a cv::Mat and copy the buffer
   cv::Mat wrap{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
                CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
-  wrap.copyTo(ReceivedImage->m);
 
-  // If the image actually has data and we are supposed to, upload to a texture
-  if (wrap.total() && CreateTexture) {
-    VideoTexture = ReceivedImage->toTexture(VideoTexture, false);
+  if (wrap.total()) {
+    wrap.copyTo(ReceivedBackBuffer->m);
 
-    if (RenderTarget) ReceivedImage->toRenderTarget(RenderTarget, false);
+    FScopeLock lock(&SwapMutex);
+    auto* tmp = ReceivedImage;
+    ReceivedImage = ReceivedBackBuffer;
+    ReceivedBackBuffer = tmp;
+    HasReceivedImage = true;
   }
 }
