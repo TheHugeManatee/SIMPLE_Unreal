@@ -9,12 +9,10 @@
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 
-#include "PushUEMacros.h"
-// this is a safe space..
+THIRD_PARTY_INCLUDES_START
 #include <simple/subscriber.hpp>
 #include <simple_msgs/image.hpp>
-// outside here is UE macro wild wild west
-#include "PopUEMacros.h"
+THIRD_PARTY_INCLUDES_END
 
 #include "UCVUMat.h"
 
