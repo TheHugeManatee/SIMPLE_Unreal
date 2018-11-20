@@ -40,7 +40,7 @@ void AImageSubscriber::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 void AImageSubscriber::Tick(float DeltaTime) {
   if (HasReceivedImage) {
     FScopeLock lock(&SwapMutex);
-    if (CreateTexture) {
+    if (UploadTexture) {
       VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
     }
     HasReceivedImage = false;
@@ -61,8 +61,8 @@ void AImageSubscriber::Connect() {
   std::string url{TCHAR_TO_UTF8(*Url)};
   std::string address{url + ":" + std::to_string(Port)};
   try {
-    Subscriber.reset(new simple::Subscriber<simple_msgs::Image<uint8_t>>{
-        address, [&](const simple_msgs::Image<uint8_t>& img) { ProcessImage(img); }});
+    Subscriber = std::make_unique<simple::Subscriber<simple_msgs::Image<uint8_t>>>(
+        address, [&](const simple_msgs::Image<uint8_t>& img) { ProcessImage(img); });
     isActive = true;
   } catch (std::exception& e) {
     UE_LOG(SIMPLE, Warning, TEXT("Unable to connect: %s"), e.what());
@@ -80,18 +80,23 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
   auto* imageData = imgMsg.getImageData();
   auto imageSize = imgMsg.getImageDimensions();
 
-  if (imageSize[2] != 1) {
-    UE_LOG(SIMPLE, Warning, TEXT("Cannot process volumetric images!"));
-    return;
-  }
-
   if (!ReceivedBackBuffer) {
     ReceivedBackBuffer = NewObject<UCVUMat>();
   }
 
-  // Wrap in a cv::Mat and copy the buffer
-  cv::Mat wrap{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
-               CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
+  cv::Mat wrap;
+  // 2D images
+  if (imageSize[2] == 1) {
+    int sizes[3]{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
+                 static_cast<int>(imageSize[2])};
+    // Wrap in a cv::Mat and copy the buffer
+    wrap = cv::Mat{3, sizes, CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
+  } else {  // 3D volumes
+    // UE_LOG(SIMPLE, Warning, TEXT("Cannot process volumetric images!"));
+    wrap = cv::Mat{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
+                   CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
+    return;
+  }
 
   if (wrap.total()) {
     wrap.copyTo(ReceivedBackBuffer->m);

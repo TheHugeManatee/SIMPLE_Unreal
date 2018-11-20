@@ -91,7 +91,7 @@ public:
 
   // Signals the subscriber to create/update a texture from the Received image (See VideoTexture)
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
-  bool CreateTexture;
+  bool UploadTexture;
 
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
   UTextureRenderTarget2D* VideoTexture;
