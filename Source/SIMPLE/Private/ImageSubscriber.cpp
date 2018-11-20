@@ -4,12 +4,10 @@
 
 #include "SIMPLE_Common.h"
 
-#include "PushUEMacros.h"
-// this is a safe space..
+THIRD_PARTY_INCLUDES_START
 #include <simple/client.hpp>
 #include <simple_msgs/int.hpp>
-// outside here is UE macro wild wild west
-#include "PopUEMacros.h"
+THIRD_PARTY_INCLUDES_END
 
 #include "Runtime/Core/Public/HAL/Runnable.h"
 #include "Runtime/Core/Public/HAL/RunnableThread.h"
@@ -85,16 +83,17 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
   }
 
   cv::Mat wrap;
-  // 2D images
   if (imageSize[2] == 1) {
-    int sizes[3]{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
-                 static_cast<int>(imageSize[2])};
+    // 2D images
     // Wrap in a cv::Mat and copy the buffer
-    wrap = cv::Mat{3, sizes, CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
-  } else {  // 3D volumes
-    // UE_LOG(SIMPLE, Warning, TEXT("Cannot process volumetric images!"));
     wrap = cv::Mat{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
                    CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
+  } else {
+    // 3D volumes
+    int sizes[3]{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
+                 static_cast<int>(imageSize[2])};
+    // UE_LOG(SIMPLE, Warning, TEXT("Cannot process volumetric images!"));
+    wrap = cv::Mat{3, sizes, CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
     return;
   }
 

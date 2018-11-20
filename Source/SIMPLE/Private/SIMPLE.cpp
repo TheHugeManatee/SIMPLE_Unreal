@@ -5,6 +5,10 @@
 #include "IPluginManager.h"
 #include "ModuleManager.h"
 
+THIRD_PARTY_INCLUDES_START
+#include <simple/context_manager.hpp>
+THIRD_PARTY_INCLUDES_END
+
 #define LOCTEXT_NAMESPACE "FSIMPLEModule"
 
 DEFINE_LOG_CATEGORY(SIMPLE);
@@ -37,6 +41,7 @@ void FSIMPLEModule::StartupModule() {
 }
 
 void FSIMPLEModule::ShutdownModule() {
+  simple::ContextManager::destroy();
   // Free the dll handle
   FPlatformProcess::FreeDllHandle(SIMPLELibraryHandle);
   SIMPLELibraryHandle = nullptr;
