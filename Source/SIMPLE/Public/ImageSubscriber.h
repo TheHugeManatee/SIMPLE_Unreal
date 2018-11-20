@@ -28,7 +28,7 @@ public:
   // Sets default values for this actor's properties
   AImageSubscriber();
 
-protected:
+protected: /* ========== OVERRIDDEN METHODS ========== */
   // Called when the game starts or when spawned
   virtual void BeginPlay() override;
 
@@ -41,7 +41,7 @@ protected:
 
   virtual void Tick(float DeltaTime) override;
 
-public:
+public: /* ========== METHODS ========== */
   /**
    * Connect to a new server. Drops the connection to an existing server.
    * @Note: SIMPLE will try reconnecting if a server is not online, so there is
@@ -64,20 +64,20 @@ public:
   UFUNCTION(BlueprintCallable, Category = "SIMPLE|ImageSubscriber")
   void Stop();
 
-public:
-  // The port to connect to
-  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
-  int32 Port;
-
+public: /* ========== PROPERTIES ========== */
   // The server connection
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
   FString Url;
+
+  // The port to connect to
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
+  int32 Port;
 
   // Whether the subscriber is active. Note: This does NOT tell if the subscriber
   // is actually connected and serving images, but only that the Subscriber has been
   // instantiated. It might still be trying to connect to the publisher..
   UPROPERTY(BlueprintReadOnly, Category = "SIMPLE|ImageSubscriber")
-  bool isActive;
+  bool isSubscriberActive;
 
   // The videos width and height (width, height)
   UPROPERTY(BlueprintReadOnly, Category = "SIMPLE|ImageSubscriber")
@@ -94,7 +94,7 @@ public:
   UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SIMPLE|ImageSubscriber")
   UTextureRenderTarget2D* VideoTexture;
 
-private:
+private: /* ========== INTERNAL ========== */
   void ProcessImage(const simple_msgs::Image<uint8_t>&);
 
   TAtomic<bool> HasReceivedImage;

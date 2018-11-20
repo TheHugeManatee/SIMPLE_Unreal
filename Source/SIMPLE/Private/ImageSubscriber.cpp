@@ -16,7 +16,7 @@ AImageSubscriber::AImageSubscriber()
   : AActor()
   , Port{0}
   , Url{TEXT("")}
-  , isActive{false}
+  , isSubscriberActive{false}
   , ImageSize{0, 0, 0}
   , VideoTexture{nullptr}
   , Subscriber{nullptr} {
@@ -61,7 +61,7 @@ void AImageSubscriber::Connect() {
   try {
     Subscriber = std::make_unique<simple::Subscriber<simple_msgs::Image<uint8_t>>>(
         address, [&](const simple_msgs::Image<uint8_t>& img) { ProcessImage(img); });
-    isActive = true;
+    isSubscriberActive = true;
   } catch (std::exception& e) {
     UE_LOG(SIMPLE, Warning, TEXT("Unable to connect: %s"), e.what());
   }
@@ -70,7 +70,7 @@ void AImageSubscriber::Connect() {
 void AImageSubscriber::Stop() {
   Subscriber.reset();
 
-  isActive = false;
+  isSubscriberActive = false;
 }
 
 void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
