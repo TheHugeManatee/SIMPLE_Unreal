@@ -36,13 +36,23 @@ void AImageSubscriber::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 }
 
 void AImageSubscriber::Tick(float DeltaTime) {
+  Super::Tick(DeltaTime);
+
   if (HasReceivedImage) {
-    FScopeLock lock(&SwapMutex);
-    if (UploadTexture) {
-      VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
+    {
+      FScopeLock lock(&SwapMutex);
+      std::swap(ReceivedImage, ReceivedBackBuffer);
     }
-    HasReceivedImage = false;
-    OnFrameReceived();
+    if (!ReceivedImage) {
+      UE_LOG(SIMPLE, Error, TEXT("Received image turned out empty!"));
+    } else {
+      if (UploadTexture) {
+        VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
+      }
+      HasReceivedImage = false;
+
+      OnFrameReceived();
+    }
   }
 }
 
@@ -90,20 +100,17 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
                    CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
   } else {
     // 3D volumes
-    int sizes[3]{static_cast<int>(imageSize[1]), static_cast<int>(imageSize[0]),
-                 static_cast<int>(imageSize[2])};
-    // UE_LOG(SIMPLE, Warning, TEXT("Cannot process volumetric images!"));
+    int sizes[3]{static_cast<int>(imageSize[2]), static_cast<int>(imageSize[1]),
+                 static_cast<int>(imageSize[0])};
+    UE_LOG(SIMPLE, Warning, TEXT("Received a volume!"));
     wrap = cv::Mat{3, sizes, CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
-    return;
   }
 
   if (wrap.total()) {
     wrap.copyTo(ReceivedBackBuffer->m);
 
     FScopeLock lock(&SwapMutex);
-    auto* tmp = ReceivedImage;
-    ReceivedImage = ReceivedBackBuffer;
-    ReceivedBackBuffer = tmp;
+    std::swap(ReceivedImage, ReceivedBackBuffer);
     HasReceivedImage = true;
   }
 }
