@@ -41,7 +41,7 @@ void AImageSubscriber::Tick(float DeltaTime) {
   if (HasReceivedImage) {
     {
       FScopeLock lock(&SwapMutex);
-      std::swap(ReceivedImage, ReceivedBackBuffer);
+      HasReceivedImage = false;
     }
     if (!ReceivedImage) {
       UE_LOG(SIMPLE, Error, TEXT("Received image turned out empty!"));
@@ -49,7 +49,6 @@ void AImageSubscriber::Tick(float DeltaTime) {
       if (UploadTexture) {
         VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
       }
-      HasReceivedImage = false;
 
       OnFrameReceived();
     }
@@ -107,10 +106,14 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
   }
 
   if (wrap.total()) {
-    wrap.copyTo(ReceivedBackBuffer->m);
+    try {
+      wrap.copyTo(ReceivedBackBuffer->m);
 
-    FScopeLock lock(&SwapMutex);
-    std::swap(ReceivedImage, ReceivedBackBuffer);
-    HasReceivedImage = true;
+      FScopeLock lock(&SwapMutex);
+      Swap(ReceivedImage, ReceivedBackBuffer);
+      HasReceivedImage = true;
+    } catch (std::exception& e) {
+      UE_LOG(SIMPLE, Error, TEXT("Error copying the received image: %s"), e.what())
+    };
   }
 }
