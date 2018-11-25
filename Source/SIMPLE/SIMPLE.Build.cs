@@ -10,23 +10,20 @@ public class SIMPLE : ModuleRules
         bEnableExceptions = true;
 
         PublicIncludePaths.AddRange(
-			new string[] {
-				"SIMPLE/Public",
-                "SIMPLE/Classes"
-				// ... add public include paths required here ...
-			}
-			);
-				
-		
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				"SIMPLE/Private",
-				// ... add other private include paths required here ...
-			}
-			);
-			
-		
-		PublicDependencyModuleNames.AddRange(
+            new string[] {
+                Path.Combine(ModuleDirectory, "Public"),
+            }
+            );
+
+
+        PrivateIncludePaths.AddRange(
+            new string[] {
+                Path.Combine(ModuleDirectory, "Private"),
+            }
+            );
+
+
+        PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
