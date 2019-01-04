@@ -20,7 +20,7 @@ void FSIMPLEModule::StartupModule() {
   // Add on the relative location of the third party dll and load it
   FString LibraryPath;
 #if PLATFORM_WINDOWS
-  LibraryPath = FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/bin/simple.dll"));
+  LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Win64/simple.dll"));
 //#elif PLATFORM_MAC
 // LibraryPath =
 //    FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/Mac/bin/simple.dylib"));
@@ -34,9 +34,9 @@ void FSIMPLEModule::StartupModule() {
   if (SIMPLELibraryHandle) {
     UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Libraryh"))
   } else {
-    UE_LOG(SIMPLE, Error,
-           TEXT("Failed to load SIMPLE library! Check your include/lib paths and make sure "
-                "simple.dll along with its dependencies is deployed!"))
+
+	  FString text = "Couldn't find dll @ " + LibraryPath;
+    UE_LOG(SIMPLE, Error, TEXT("%s"), *text)
   }
 }
 

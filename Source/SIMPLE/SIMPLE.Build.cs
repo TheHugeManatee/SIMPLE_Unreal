@@ -79,14 +79,12 @@ public class SIMPLE : ModuleRules
                 Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "flatbuffers", "include"),
             });
 
-
-
             //Delay - load the DLL, so we can load it from the right place first
             //PublicDelayLoadDLLs.Add("simple.dll");
 
             // Add a Runtime Dependency so the DLLs will be packaged correctly
-            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "bin", "simple.dll"));
-            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "bin", "libzmq-mt-4_3_1.dll"));
+            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Win64", "simple.dll"));
+            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Win64", "libzmq-mt-4_3_1.dll"));
         }
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {
