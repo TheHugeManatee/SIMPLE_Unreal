@@ -39,7 +39,7 @@ void AImageSubscriber::Tick(float DeltaTime) {
   Super::Tick(DeltaTime);
 
   if (HasReceivedImage) {
-    {
+    {  // clear the received flag
       FScopeLock lock(&SwapMutex);
       HasReceivedImage = false;
     }
