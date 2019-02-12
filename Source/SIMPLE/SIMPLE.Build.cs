@@ -10,51 +10,28 @@ public class SIMPLE : ModuleRules
         bEnableExceptions = true;
 
         PublicIncludePaths.AddRange(
-            new string[] {
-                Path.Combine(ModuleDirectory, "Public"),
-            }
-            );
+            new string[] { Path.Combine(ModuleDirectory, "Public"), });
 
 
         PrivateIncludePaths.AddRange(
-            new string[] {
-                Path.Combine(ModuleDirectory, "Private"),
-            }
-            );
+            new string[] { Path.Combine(ModuleDirectory, "Private"), });
 
 
         PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Core",
-				// ... add other public dependencies that you statically link with here ...
-			}
-			);
+			new string[] { "Core", });
 			
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-                "Core",
-                "CoreUObject",
-                "Engine",
-                "Projects",
-                "InputCore",
-                "RHI",
-                "RenderCore",
-                "OpenCV"
-            }
-			);
-		
-		
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				// ... add any modules that your module loads dynamically here ...
-			}
-			);
+		PrivateDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "Projects",
+            "InputCore",
+            "RHI",
+            "RenderCore",
+            "OpenCV"
+        });
 
         LoadSIMPLELib(Target);
-
     }
 
     public void LoadSIMPLELib(ReadOnlyTargetRules Target)
@@ -79,10 +56,10 @@ public class SIMPLE : ModuleRules
                 Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "flatbuffers", "include"),
             });
 
-            //Delay - load the DLL, so we can load it from the right place first
-            //PublicDelayLoadDLLs.Add("simple.dll");
 
             // Add a Runtime Dependency so the DLLs will be packaged correctly
+            // Note: SIMPLE cannot be delay-loaded due to the use of static variables, it seems. This means it has to be present
+            // in the Binaries folder at Engine startup
             RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Win64", "simple.dll"));
             RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Win64", "libzmq-mt-4_3_1.dll"));
         }

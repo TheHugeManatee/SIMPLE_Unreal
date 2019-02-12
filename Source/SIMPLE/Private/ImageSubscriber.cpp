@@ -72,7 +72,7 @@ void AImageSubscriber::Connect() {
         address, [&](const simple_msgs::Image<uint8_t>& img) { ProcessImage(img); });
     isSubscriberActive = true;
   } catch (std::exception& e) {
-    UE_LOG(SIMPLE, Warning, TEXT("Unable to connect: %s"), e.what());
+    UE_LOG(SIMPLE, Warning, TEXT("Unable to connect: %s"), UTF8_TO_TCHAR(e.what()));
   }
 }
 
@@ -113,7 +113,7 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
       Swap(ReceivedImage, ReceivedBackBuffer);
       HasReceivedImage = true;
     } catch (std::exception& e) {
-      UE_LOG(SIMPLE, Error, TEXT("Error copying the received image: %s"), e.what())
+      UE_LOG(SIMPLE, Error, TEXT("Error copying the received image: %s"), UTF8_TO_TCHAR(e.what()))
     };
   }
 }
