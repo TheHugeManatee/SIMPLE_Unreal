@@ -18,8 +18,14 @@ AImageSubscriber::AImageSubscriber()
   , Url{TEXT("")}
   , isSubscriberActive{false}
   , ImageSize{0, 0, 0}
+  , VoxelSize{0.0}
+  , ImageOrigin{0.0}
+  , ImageRotation{}
   , VideoTexture{nullptr}
-  , Subscriber{nullptr} {
+  , Subscriber{nullptr}
+  , ReceivedBackBuffer{nullptr}
+  , ReceivedExchangeBuffer{nullptr}
+  , ReceivedImage{nullptr} {
   PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -39,8 +45,14 @@ void AImageSubscriber::Tick(float DeltaTime) {
   Super::Tick(DeltaTime);
 
   if (HasReceivedImage) {
-    {  // clear the received flag
+    {  // copy/swap the the data and clear received flag
       FScopeLock lock(&SwapMutex);
+      Swap(ReceivedImage, ReceivedExchangeBuffer);
+      ImageSize = ImageSizeBackBuffer;
+      VoxelSize = VoxelSizeBackBuffer;
+      ImageOrigin = ImageOriginBackBuffer;
+      ImageRotation = ImageRotationBackBuffer;
+
       HasReceivedImage = false;
     }
     if (!ReceivedImage) {
@@ -86,10 +98,9 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
   auto& header = imgMsg.getHeader();
   auto* imageData = imgMsg.getImageData();
   auto imageSize = imgMsg.getImageDimensions();
-
-  if (!ReceivedBackBuffer) {
-    ReceivedBackBuffer = NewObject<UCVUMat>();
-  }
+  auto imageVoxelSize = imgMsg.getSpacing();
+  auto imagePos = imgMsg.getImageOrigin().getPosition();
+  auto imageRot = imgMsg.getImageOrigin().getQuaternion();
 
   cv::Mat wrap;
   if (imageSize[2] == 1) {
@@ -101,16 +112,32 @@ void AImageSubscriber::ProcessImage(const simple_msgs::Image<uint8_t>& imgMsg) {
     // 3D volumes
     int sizes[3]{static_cast<int>(imageSize[2]), static_cast<int>(imageSize[1]),
                  static_cast<int>(imageSize[0])};
-    UE_LOG(SIMPLE, Warning, TEXT("Received a volume!"));
+    UE_LOG(SIMPLE, Warning, TEXT("Received a volume of %d %d %d!"), imageSize[0], imageSize[1],
+           imageSize[2]);
     wrap = cv::Mat{3, sizes, CV_8UC(imgMsg.getNumChannels()), const_cast<uint8_t*>(imageData)};
   }
 
   if (wrap.total()) {
     try {
+      // Create the back buffer if it's empty
+      if (!ReceivedBackBuffer) {
+        ReceivedBackBuffer = NewObject<UCVUMat>();
+      }
       wrap.copyTo(ReceivedBackBuffer->m);
 
+      // swap data and fill back buffer info
       FScopeLock lock(&SwapMutex);
-      Swap(ReceivedImage, ReceivedBackBuffer);
+      Swap(ReceivedBackBuffer, ReceivedExchangeBuffer);
+      ImageSizeBackBuffer =
+          FIntVector{int32(imageSize[0]), int32(imageSize[1]), int32(imageSize[2])};
+      VoxelSizeBackBuffer =
+          FVector{float(imageVoxelSize[0]), float(imageVoxelSize[1]), float(imageVoxelSize[2])};
+      ImageOriginBackBuffer =
+          FVector{float(imagePos.getX()), float(imagePos.getY()), float(imagePos.getZ())};
+      ImageRotationBackBuffer = FQuat{float(imageRot.getX()), float(imageRot.getY()),
+                                      float(imageRot.getZ()), float(imageRot.getW())};
+
+      // set the flag so the tick() will fetch the data
       HasReceivedImage = true;
     } catch (std::exception& e) {
       UE_LOG(SIMPLE, Error, TEXT("Error copying the received image: %s"), UTF8_TO_TCHAR(e.what()))
