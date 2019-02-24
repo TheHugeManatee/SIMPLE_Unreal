@@ -59,7 +59,7 @@ void AImageSubscriber::Tick(float DeltaTime) {
       UE_LOG(SIMPLE, Error, TEXT("Received image turned out empty!"));
     } else {
       if (UploadTexture) {
-        VideoTexture = ReceivedImage->toRenderTarget(VideoTexture, false);
+        ReceivedImage->ToRenderTarget(VideoTexture, false);
       }
 
       OnFrameReceived();
