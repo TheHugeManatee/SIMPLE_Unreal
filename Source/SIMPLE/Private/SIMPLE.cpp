@@ -21,9 +21,8 @@ void FSIMPLEModule::StartupModule() {
   FString LibraryPath;
 #if PLATFORM_WINDOWS
   LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Win64/simple.dll"));
-//#elif PLATFORM_MAC
-// LibraryPath =
-//    FPaths::Combine(*BaseDir, TEXT("ThirdParty/simple/Mac/bin/simple.dylib"));
+#elif PLATFORM_MAC
+    LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Mac/libsimple.dylib"));
 #else
   static_assert(false, "Other platforms are currently not supported!");
 #endif
@@ -35,7 +34,7 @@ void FSIMPLEModule::StartupModule() {
     UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Libraryh"))
   } else {
 
-	  FString text = "Couldn't find dll @ " + LibraryPath;
+      FString text = "Couldn't find dll @ " + LibraryPath;
     UE_LOG(SIMPLE, Error, TEXT("%s"), *text)
   }
 }
