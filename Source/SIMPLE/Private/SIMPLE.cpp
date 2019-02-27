@@ -5,13 +5,13 @@
 #include "IPluginManager.h"
 #include "ModuleManager.h"
 
-THIRD_PARTY_INCLUDES_START
-#include <simple/context_manager.hpp>
-THIRD_PARTY_INCLUDES_END
-
 #define LOCTEXT_NAMESPACE "FSIMPLEModule"
 
 DEFINE_LOG_CATEGORY(SIMPLE);
+
+THIRD_PARTY_INCLUDES_START
+#include <simple/context_manager.hpp>
+THIRD_PARTY_INCLUDES_END
 
 void FSIMPLEModule::StartupModule() {
   // Get the base directory of this plugin
@@ -32,10 +32,9 @@ void FSIMPLEModule::StartupModule() {
       !LibraryPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*LibraryPath) : nullptr;
 
   if (SIMPLELibraryHandle) {
-    UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Libraryh"))
+    UE_LOG(SIMPLE, Log, TEXT("Loaded SIMPLE Library"))
   } else {
-
-	  FString text = "Couldn't find dll @ " + LibraryPath;
+    FString text = "Couldn't find dll @ " + LibraryPath;
     UE_LOG(SIMPLE, Error, TEXT("%s"), *text)
   }
 }
