@@ -43,8 +43,8 @@ public class SIMPLE : ModuleRules
             //Add the import library
             PublicLibraryPaths.AddRange(
                 new string[] {
-                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib"),
-                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "lib")
+                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib", "Win64"),
+                     Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "lib", "Win64")
                 });
 
             PublicAdditionalLibraries.Add("simple.lib");
@@ -65,7 +65,27 @@ public class SIMPLE : ModuleRules
         }
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {
-            //PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, "Mac", "Release", "SIMPLE_world341.dylib"));
+            string SIMPLELibPath = Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "Mac", "SIMPLE");
+
+            //Add the import library
+            PublicLibraryPaths.AddRange(
+                new string[] {
+                    Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib", "Mac"),
+                    Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "lib", "Mac")
+            });
+
+            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib", "Mac", "libsimple-static.a"));
+            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "lib", "Mac", "libsimple_msgs.a"));
+            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "lib", "Mac", "libzmq.a"));
+
+            PublicIncludePaths.AddRange(new string[] {
+                Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "SIMPLE", "include"),
+                Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "zeromq", "include"),
+                Path.Combine(ModuleDirectory, "..", "..", "ThirdParty", "flatbuffers", "include"),
+            });
+
+            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Mac", "libsimple.dylib"));
+            RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "..", "..", "Binaries", "Mac", "libzmq.dylib"));
         }
     }
 }
