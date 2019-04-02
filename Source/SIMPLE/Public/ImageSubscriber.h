@@ -9,14 +9,15 @@
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 
-#include "UCVUMat_U.h"
-
 #include <memory>
 
 THIRD_PARTY_INCLUDES_START
 #include <simple/subscriber.hpp>
 #include <simple_msgs/image.hpp>
+#include <opencv2/opencv.hpp>
 THIRD_PARTY_INCLUDES_END
+
+#include "UCVUMat.h"
 
 #include "ImageSubscriber.generated.h"
 
