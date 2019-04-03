@@ -14,21 +14,20 @@ THIRD_PARTY_INCLUDES_END
 
 AImageSubscriber::AImageSubscriber()
   : AActor()
-  , Port{0}
   , Url{TEXT("")}
+  , Port{0}
   , isSubscriberActive{false}
   , ImageSize{0, 0, 0}
   , VoxelSize{0.0}
   , ImageOrigin{0.0}
   , ImageRotation{}
+  , ReceivedImage{nullptr} 
   , VideoTexture{nullptr}
   , Subscriber{nullptr}
   , ReceivedBackBuffer{nullptr}
-  , ReceivedExchangeBuffer{nullptr}
-  , ReceivedImage{nullptr} {
-  PrimaryActorTick.bCanEverTick = true;
+	, ReceivedExchangeBuffer{ nullptr } {
+	PrimaryActorTick.bCanEverTick = true;
 }
-
 // Called when the game starts or when spawned
 void AImageSubscriber::BeginPlay() {
   Super::BeginPlay();
