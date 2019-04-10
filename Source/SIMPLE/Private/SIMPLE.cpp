@@ -1,4 +1,5 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+// (c) 2019 Technical University of Munich
+// Jakob Weiss <jakob.weiss@tum.de>
 
 #include "SIMPLE.h"
 #include "Core.h"
@@ -22,7 +23,7 @@ void FSIMPLEModule::StartupModule() {
 #if PLATFORM_WINDOWS
   LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Win64/simple.dll"));
 #elif PLATFORM_MAC
- LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Mac/libsimple.dylib"));
+  LibraryPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Mac/libsimple.dylib"));
 #else
   static_assert(false, "Other platforms are currently not supported!");
 #endif

@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// (c) 2019 Technical University of Munich
+// Jakob Weiss <jakob.weiss@tum.de>
 
 #pragma once
 
@@ -12,9 +13,9 @@
 #include <memory>
 
 THIRD_PARTY_INCLUDES_START
+#include <opencv2/opencv.hpp>
 #include <simple/subscriber.hpp>
 #include <simple_msgs/image.hpp>
-#include <opencv2/opencv.hpp>
 THIRD_PARTY_INCLUDES_END
 
 #include "UCVUMat.h"

@@ -1,4 +1,5 @@
-// (c) 2018 Jakob Weiss
+// (c) 2019 Technical University of Munich
+// Jakob Weiss <jakob.weiss@tum.de>
 
 #pragma once
 
@@ -14,6 +15,10 @@ THIRD_PARTY_INCLUDES_END
 
 #include "TransformSubscriberComponent.generated.h"
 
+/**
+ * A component that can be used to receive transforms. Use this to control transformation of
+ * attached actors/components from SIMPLE. NOTE: This is under development, was not tested yet!
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SIMPLE_API UTransformSubscriberComponent : public USceneComponent {
   GENERATED_BODY()

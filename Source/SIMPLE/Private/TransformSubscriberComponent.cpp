@@ -1,4 +1,5 @@
-// (c) 2018 Jakob Weiss
+// (c) 2019 Technical University of Munich
+// Jakob Weiss <jakob.weiss@tum.de>
 
 #include "TransformSubscriberComponent.h"
 
@@ -20,6 +21,8 @@ void UTransformSubscriberComponent::TickComponent(float DeltaTime, ELevelTick Ti
                                                   FActorComponentTickFunction* ThisTickFunction) {
   Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+  // note: a better pattern might be to use TQueue to store the received messages between ticks, as
+  // that is lock-free and guarantees not to lose messages.
   FScopeLock lock(&PoseUpdateMutex);
   this->SetRelativeTransform(ReceivedPose);
 }

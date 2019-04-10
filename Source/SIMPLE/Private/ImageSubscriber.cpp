@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// (c) 2019 Technical University of Munich
+// Jakob Weiss <jakob.weiss@tum.de>
 
 #include "ImageSubscriber.h"
 
@@ -21,12 +22,12 @@ AImageSubscriber::AImageSubscriber()
   , VoxelSize{0.0}
   , ImageOrigin{0.0}
   , ImageRotation{}
-  , ReceivedImage{nullptr} 
+  , ReceivedImage{nullptr}
   , VideoTexture{nullptr}
   , Subscriber{nullptr}
   , ReceivedBackBuffer{nullptr}
-	, ReceivedExchangeBuffer{ nullptr } {
-	PrimaryActorTick.bCanEverTick = true;
+  , ReceivedExchangeBuffer{nullptr} {
+  PrimaryActorTick.bCanEverTick = true;
 }
 // Called when the game starts or when spawned
 void AImageSubscriber::BeginPlay() {
